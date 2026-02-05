@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/cliente-management-app/static/css/main.65d146aa.css",
-    "main.js": "/cliente-management-app/static/js/main.de8cf26e.js",
+    "main.js": "/cliente-management-app/static/js/main.f5362eb1.js",
     "index.html": "/cliente-management-app/index.html",
     "main.65d146aa.css.map": "/cliente-management-app/static/css/main.65d146aa.css.map",
-    "main.de8cf26e.js.map": "/cliente-management-app/static/js/main.de8cf26e.js.map"
+    "main.f5362eb1.js.map": "/cliente-management-app/static/js/main.f5362eb1.js.map"
   },
   "entrypoints": [
     "static/css/main.65d146aa.css",
-    "static/js/main.de8cf26e.js"
+    "static/js/main.f5362eb1.js"
   ]
 }
