@@ -14,6 +14,7 @@ import {
     Snackbar,
     CircularProgress,
     IconButton,
+    Avatar,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -26,6 +27,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { useAuth } from '../../context/AuthContext';
 import clientService from '../../services/clientService';
 import { validateRequired, validateMaxLength } from '../../utils/validators';
+import { fileToBase64 } from '../../utils/imageUtils';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -56,6 +58,12 @@ const useStyles = makeStyles((theme) => ({
         border: '1px solid #d9d9d9',
         borderRadius: '50%',
         padding: 4,
+    },
+    titleIconContainer: {
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     title: {
         fontWeight: 600,
@@ -118,9 +126,9 @@ const ClientForm = () => {
         telefonoCelular: '',
         otroTelefono: '',
         direccion: '',
-        fNacimiento: new Date('2022-04-26'), // Mockup default
-        fAfiliacion: new Date('2022-04-26'), // Mockup default
-        sexo: 'Femenino',
+        fNacimiento: isEditMode ? null : new Date(),
+        fAfiliacion: isEditMode ? null : new Date(),
+        sexo: 'F',
         resenaPersonal: '',
         imagen: '',
         interesFK: '',
@@ -162,7 +170,7 @@ const ClientForm = () => {
                         direccion: data.direccion || '',
                         fNacimiento: data.fNacimiento ? new Date(data.fNacimiento) : null,
                         fAfiliacion: data.fAfiliacion ? new Date(data.fAfiliacion) : null,
-                        sexo: data.sexo === 'M' ? 'Masculino' : 'Femenino',
+                        sexo: data.sexo || 'F',
                         resenaPersonal: data.resenaPersonal || '',
                         imagen: data.imagen || '',
                         interesFK: data.interesesId || '',
@@ -201,6 +209,22 @@ const ClientForm = () => {
             setErrors({ ...errors, [name]: '' });
         }
     };
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const base64 = await fileToBase64(file);
+                setFormData({ ...formData, imagen: base64 });
+            } catch (error) {
+                setSnackbar({
+                    open: true,
+                    message: 'Error al procesar imagen',
+                    severity: 'error',
+                });
+            }
+        }
+    };
+
 
     const validate = () => {
         const newErrors = {};
@@ -208,6 +232,7 @@ const ClientForm = () => {
         if (!validateRequired(formData.apellidos)) newErrors.apellidos = 'Apellidos es requerido';
         if (!validateRequired(formData.identificacion)) newErrors.identificacion = 'Identificación es requerida';
         if (!validateRequired(formData.telefonoCelular)) newErrors.telefonoCelular = 'Teléfono es requerido';
+        if (!validateRequired(formData.otroTelefono)) newErrors.otroTelefono = 'Otro teléfono es requerido';
         if (!validateRequired(formData.direccion)) newErrors.direccion = 'Dirección es requerida';
         if (!formData.fNacimiento) newErrors.fNacimiento = 'Fecha requerida';
         if (!formData.fAfiliacion) newErrors.fAfiliacion = 'Fecha requerida';
@@ -233,7 +258,7 @@ const ClientForm = () => {
                 direccion: formData.direccion,
                 fNacimiento: formData.fNacimiento?.toISOString(),
                 fAfiliacion: formData.fAfiliacion?.toISOString(),
-                sexo: formData.sexo === 'Masculino' ? 'M' : 'F',
+                sexo: formData.sexo,
                 resennaPersonal: formData.resenaPersonal,
                 imagen: formData.imagen,
                 interesFK: formData.interesFK,
@@ -248,7 +273,7 @@ const ClientForm = () => {
                 setSnackbar({ open: true, message: 'Creado correctamente', severity: 'success' });
             }
 
-            setTimeout(() => history.push('/clients'), 1000);
+            setTimeout(() => history.push('/clients'), 500);
         } catch (error) {
             setSnackbar({ open: true, message: 'Error en la transacción', severity: 'error' });
         } finally {
@@ -275,7 +300,28 @@ const ClientForm = () => {
                 <Paper className={classes.paper}>
                     <Box className={classes.headerRow}>
                         <Box className={classes.titleBox}>
-                            <AccountCircleIcon className={classes.titleIcon} />
+                            <Box
+                                className={classes.titleIconContainer}
+                                onClick={() => document.getElementById('imageInput').click()}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                {formData.imagen ? (
+                                    <Avatar
+                                        src={`data:image/jpeg;base64,${formData.imagen}`}
+                                        alt="Client"
+                                        className={classes.titleIcon}
+                                    />
+                                ) : (
+                                    <AccountCircleIcon className={classes.titleIcon} />
+                                )}
+                                <input
+                                    type="file"
+                                    id="imageInput"
+                                    hidden
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                />
+                            </Box>
                             <Typography variant="h5" className={classes.title}>
                                 Mantenimiento de clientes
                             </Typography>
@@ -307,7 +353,7 @@ const ClientForm = () => {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    label="Identificación"
+                                    label="Identificación *"
                                     name="identificacion"
                                     value={formData.identificacion}
                                     onChange={handleChange}
@@ -321,7 +367,7 @@ const ClientForm = () => {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    label="Nombre"
+                                    label="Nombre *"
                                     name="nombre"
                                     value={formData.nombre}
                                     onChange={handleChange}
@@ -335,7 +381,7 @@ const ClientForm = () => {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    label="Apellidos"
+                                    label="Apellidos *"
                                     name="apellidos"
                                     value={formData.apellidos}
                                     onChange={handleChange}
@@ -358,8 +404,8 @@ const ClientForm = () => {
                                         variant="outlined"
                                         InputLabelProps={{ shrink: true }}
                                     >
-                                        <MenuItem value="Femenino">Femenino</MenuItem>
-                                        <MenuItem value="Masculino">Masculino</MenuItem>
+                                        <MenuItem value="F">Femenino</MenuItem>
+                                        <MenuItem value="M">Masculino</MenuItem>
                                     </TextField>
                                 </FormControl>
                             </Grid>
@@ -368,7 +414,7 @@ const ClientForm = () => {
                                     fullWidth
                                     inputVariant="outlined"
                                     className={classes.outlinedInput}
-                                    label="Fecha de nacimiento"
+                                    label="Fecha de nacimiento *"
                                     format="dd/MM/yyyy"
                                     placeholder="26/04/2022"
                                     value={formData.fNacimiento}
@@ -382,7 +428,7 @@ const ClientForm = () => {
                                     fullWidth
                                     inputVariant="outlined"
                                     className={classes.outlinedInput}
-                                    label="Fecha de afiliación"
+                                    label="Fecha de afiliación *"
                                     format="dd/MM/yyyy"
                                     placeholder="26/04/2022"
                                     value={formData.fAfiliacion}
@@ -397,7 +443,7 @@ const ClientForm = () => {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    label="Teléfono Celular"
+                                    label="Teléfono Celular *"
                                     name="telefonoCelular"
                                     value={formData.telefonoCelular}
                                     onChange={handleChange}
@@ -411,10 +457,11 @@ const ClientForm = () => {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    label="Teléfono Otro"
+                                    label="Teléfono Otro *"
                                     name="otroTelefono"
                                     value={formData.otroTelefono}
                                     onChange={handleChange}
+                                    error={!!errors.otroTelefono}
                                     className={classes.outlinedInput}
                                     placeholder="Teléfono Otro"
                                     InputLabelProps={{ shrink: true }}
@@ -447,7 +494,7 @@ const ClientForm = () => {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    label="Dirección"
+                                    label="Dirección *"
                                     name="direccion"
                                     multiline
                                     rows={1}
@@ -465,7 +512,7 @@ const ClientForm = () => {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    label="Reseña"
+                                    label="Reseña *"
                                     name="resenaPersonal"
                                     multiline
                                     rows={1}
