@@ -8,7 +8,6 @@ import {
     Drawer,
     List,
     ListItem,
-    ListItemIcon,
     ListItemText,
     Box,
     Divider,
@@ -17,8 +16,6 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
-import HomeIcon from '@material-ui/icons/Home';
-import PeopleIcon from '@material-ui/icons/People';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { useAuth } from '../../context/AuthContext';
@@ -31,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
-        backgroundColor: '#001529', // Dark navy from mockup
+        backgroundColor: '#001529',
+        borderBottom: '4px solid #1890ff',
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -53,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     },
     drawerPaper: {
         width: drawerWidth,
-        backgroundColor: '#f0f2f5', // Light gray background from mockup
+        backgroundColor: '#f0f2f5',
         borderRight: 'none',
     },
     drawerContainer: {
@@ -75,8 +73,13 @@ const useStyles = makeStyles((theme) => ({
     largeAvatar: {
         width: theme.spacing(12),
         height: theme.spacing(12),
-        backgroundColor: '#333',
+        backgroundColor: '#fff',
+        borderRadius: '50%',
         marginBottom: theme.spacing(2),
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
     },
     userName: {
         fontWeight: 600,
@@ -105,6 +108,15 @@ const useStyles = makeStyles((theme) => ({
         '& .MuiListItemText-primary': {
             fontWeight: 600,
         },
+    },
+    logoutButton: {
+        backgroundColor: '#fff',
+        color: '#001529', // Navy blue matching the header
+        '&:hover': {
+            backgroundColor: '#e6f7ff',
+        },
+        marginLeft: theme.spacing(1),
+        padding: 6, // Adjusted for a better circular fit
     },
 }));
 
@@ -138,7 +150,9 @@ const Layout = ({ children }) => {
         <div>
             <div className={classes.toolbar} />
             <Box className={classes.profileSection}>
-                <AccountCircleIcon className={classes.largeAvatar} style={{ fontSize: 100, color: '#000' }} />
+                <Box className={classes.largeAvatar}>
+                    <AccountCircleIcon style={{ fontSize: 100, color: '#000' }} />
+                </Box>
                 <Typography variant="h6" className={classes.userName}>
                     {user || 'Nombre de Usuario'}
                 </Typography>
@@ -188,8 +202,12 @@ const Layout = ({ children }) => {
                         <Typography variant="body1" style={{ fontWeight: 600, marginRight: 8 }}>
                             {user || 'Nombre de Usuario'}
                         </Typography>
-                        <IconButton color="inherit" onClick={handleLogout} title="Cerrar sesión">
-                            <ExitToAppIcon />
+                        <IconButton
+                            className={classes.logoutButton}
+                            onClick={handleLogout}
+                            title="Cerrar sesión"
+                        >
+                            <ExitToAppIcon fontSize="small" />
                         </IconButton>
                     </Box>
                 </Toolbar>
