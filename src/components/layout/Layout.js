@@ -13,6 +13,7 @@ import {
     Divider,
     Hidden,
     CssBaseline,
+    Avatar,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -124,7 +125,7 @@ const Layout = ({ children }) => {
     const classes = useStyles();
     const history = useHistory();
     const location = useLocation();
-    const { user, logout } = useAuth();
+    const { user, imagen, logout } = useAuth();
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const handleDrawerToggle = () => {
@@ -151,7 +152,15 @@ const Layout = ({ children }) => {
             <div className={classes.toolbar} />
             <Box className={classes.profileSection}>
                 <Box className={classes.largeAvatar}>
-                    <AccountCircleIcon style={{ fontSize: 100, color: '#000' }} />
+                    {imagen ? (
+                        <Avatar
+                            src={`data:image/jpeg;base64,${imagen}`}
+                            alt={user}
+                            style={{ width: '100%', height: '100%' }}
+                        />
+                    ) : (
+                        <AccountCircleIcon style={{ fontSize: 100, color: '#000' }} />
+                    )}
                 </Box>
                 <Typography variant="h6" className={classes.userName}>
                     {user || 'Nombre de Usuario'}

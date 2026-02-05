@@ -8,6 +8,7 @@ const initialState = {
     user: null,
     token: null,
     userid: null,
+    imagen: null,
 };
 
 const authReducer = (state, action) => {
@@ -19,6 +20,7 @@ const authReducer = (state, action) => {
                 user: action.payload.username,
                 token: action.payload.token,
                 userid: action.payload.userid,
+                imagen: action.payload.imagen,
             };
         case 'LOGOUT':
             return {
@@ -31,6 +33,7 @@ const authReducer = (state, action) => {
                 user: action.payload.username,
                 token: action.payload.token,
                 userid: action.payload.userid,
+                imagen: action.payload.imagen,
             };
         default:
             return state;

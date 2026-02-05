@@ -22,6 +22,9 @@ const authService = {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userid', data.userid);
         localStorage.setItem('username', data.username);
+        if (data.imagen) {
+            localStorage.setItem('imagen', data.imagen);
+        }
     },
 
     getAuthData: () => {
@@ -29,6 +32,7 @@ const authService = {
             token: localStorage.getItem('token'),
             userid: localStorage.getItem('userid'),
             username: localStorage.getItem('username'),
+            imagen: localStorage.getItem('imagen'),
         };
     },
 
@@ -36,6 +40,7 @@ const authService = {
         localStorage.removeItem('token');
         localStorage.removeItem('userid');
         localStorage.removeItem('username');
+        localStorage.removeItem('imagen');
     },
 
     isAuthenticated: () => {
