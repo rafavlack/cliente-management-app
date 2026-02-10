@@ -8,12 +8,10 @@ import {
     Button,
     Grid,
     FormControl,
-    Select,
     MenuItem,
     Box,
     Snackbar,
     CircularProgress,
-    IconButton,
     Avatar,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,7 +24,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import MuiAlert from '@material-ui/lab/Alert';
 import { useAuth } from '../../context/AuthContext';
 import clientService from '../../services/clientService';
-import { validateRequired, validateMaxLength } from '../../utils/validators';
+import { validateRequired } from '../../utils/validators';
 import { fileToBase64 } from '../../utils/imageUtils';
 
 const useStyles = makeStyles((theme) => ({

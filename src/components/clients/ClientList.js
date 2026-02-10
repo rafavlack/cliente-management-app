@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
     Container,
@@ -146,7 +146,7 @@ const ClientList = () => {
         });
     };
 
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         setLoading(true);
         try {
             const data = await clientService.listClients(
@@ -164,7 +164,7 @@ const ClientList = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filters.identificacion, filters.nombre, userid])
 
     const handleAddClient = () => {
         history.push('/clients/new');
@@ -215,7 +215,7 @@ const ClientList = () => {
     // Load clients on mount
     useEffect(() => {
         handleSearch();
-    }, []);
+    }, [handleSearch]);
 
     return (
         <Container className={classes.container} maxWidth="lg">
